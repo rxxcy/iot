@@ -1,6 +1,6 @@
-export const logger = (request, res, next) => {
+export const logger = async (request, res, next) => {
   const start = Date.now();
   const { method, url } = request;
-  next();
+  await next();
   console.log(`[ ${method} ] Gwei ${start - Date.now()} ms -> ${url}`);
 };

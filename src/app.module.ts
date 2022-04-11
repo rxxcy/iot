@@ -7,6 +7,7 @@ import { ApiController } from './api/api.controller';
 import { ApiService } from './api/api.service';
 import { TerminalService } from './terminal/terminal.service';
 import { UserService } from './user/user.service';
+import { WsGateway } from './socket/gateway';
 
 @Module({
   imports: [],
@@ -16,6 +17,6 @@ import { UserService } from './user/user.service';
     UserController,
     ApiController,
   ],
-  providers: [AppService, ApiService, UserService, TerminalService],
+  providers: [AppService, ApiService, UserService, TerminalService, WsGateway],
 })
 export class AppModule {}
