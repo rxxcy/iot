@@ -8,6 +8,9 @@ export class User {
   @Column('varchar', { name: 'account', length: 20 })
   account: string;
 
+  @Column('varchar', { name: 'email', length: 50 })
+  email: string;
+
   @Column('int', { name: 'create_time', nullable: true })
   createTime: number | null;
 

@@ -7,3 +7,9 @@ export const encodePassword = (x: string) => {
 };
 
 export const time = () => Date.parse(new Date().toString()) / 1000;
+
+export const createUuid = () => {
+  /**
+   *
+   */
+};

@@ -1,16 +1,20 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { encodePassword } from '../utils';
+import { UserAuthService } from '../auth/userauth.service';
 
 @Controller('account')
 export class AccountController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private userAuthService: UserAuthService,
+  ) {}
 
   @Post('login')
   async login(
     @Body('account') account: string,
     @Body('password') password: string,
-  ) {
+  ): Promise<object> {
     if (!account || account.length < 3) return { code: 0, msg: '账号错误' };
     if (!password || password.length < 6)
       return { code: 0, msg: '密码错误0x0' };
@@ -20,7 +24,8 @@ export class AccountController {
     if (en_password !== user.password) return { code: 0, msg: '密码错误0x2' };
     if (!user.status) return { code: 0, msg: '账号状态异常' };
     await this.userService.setLastLoginTime(user.id);
-    return user;
+    const token = await this.userAuthService.generateToken(user.id);
+    return token ? { code: 1, data: { token } } : { code: 1, msg: '签名失败' };
   }
 
   @Post('register')
@@ -28,7 +33,7 @@ export class AccountController {
     @Body('captcha') captcha: string,
     @Body('account') account: string,
     @Body('password') password: string,
-  ) {
+  ): Promise<object> {
     if (!account || account.length < 3 || account.length > 7)
       return { code: 0, msg: '账号3-7位' };
     if (!password || password.length < 6 || password.length > 20)

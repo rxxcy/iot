@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { time } from '../utils';
+import { encodePassword } from '../utils';
 
 @Injectable()
 export class UserService {
@@ -28,8 +29,21 @@ export class UserService {
   }
 
   async setLastLoginTime(id: number) {
+    return await this.updateUserField(id, 'lastLoginTime', time());
+  }
+
+  async setPassword(id: number, password: string) {
+    const pwd = encodePassword(password);
+    return await this.updateUserField(id, 'password', pwd);
+  }
+
+  async setEmail(id: number, email: string) {
+    return await this.updateUserField(id, 'email', email);
+  }
+
+  async updateUserField(id: number, field: string, value: any) {
     const user = await this.userModel.findOneBy({ id });
-    user.lastLoginTime = time();
+    user[field] = value;
     return await this.userModel.save(user);
   }
 

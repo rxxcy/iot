@@ -1,8 +1,8 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Index('name', ['name', 'clientId'], {})
-@Entity('machine', { schema: 'iot' })
-export class Machine {
+@Entity('terminal', { schema: 'iot' })
+export class Terminal {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
@@ -17,6 +17,9 @@ export class Machine {
 
   @Column('varchar', { name: 'name', nullable: true, length: 30 })
   name: string | null;
+
+  @Column('varchar', { name: 'description', nullable: true, length: 100 })
+  description: string | null;
 
   @Column('int', { name: 'create_time', nullable: true })
   createTime: number | null;

@@ -4,7 +4,7 @@ import { uuid } from './utils/uuid';
 @Injectable()
 export class AppService {
   getHello(): string {
-    const id = uuid(7);
+    const id = uuid(4);
     return `hello iot! ${id}`;
   }
 }
