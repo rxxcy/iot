@@ -1,4 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('terminal')
-export class TerminalController {}
+@UseGuards(AuthGuard('local'))
+export class TerminalController {
+  @Get()
+  async list(@Request() request) {
+    return request.user;
+  }
+}

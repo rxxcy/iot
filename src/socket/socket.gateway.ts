@@ -9,7 +9,7 @@ import { SOCKET_POTR } from '../constant';
 
 @WebSocketGateway(SOCKET_POTR, {
   path: '/socket.io',
-  // allowEIO3: true,
+  allowEIO3: true,
   cors: {
     origin: /.*/,
     credentials: true,
@@ -17,11 +17,12 @@ import { SOCKET_POTR } from '../constant';
 })
 export class SocketGateway {
   // socket实例
-  @WebSocketServer() private ws: Server;
+  @WebSocketServer() private server: Server;
   handleConnection(client: Socket) {
     /**
      * 链接
      */
+    // client.disconnect();
     console.log('client + 1: ' + client.id);
   }
   handleDisconnect(client: Socket) {
