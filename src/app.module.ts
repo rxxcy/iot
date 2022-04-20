@@ -1,43 +1,22 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-/**
- * module
- */
-import { JwtModule } from '@nestjs/jwt';
+
 /**
  * controller
  */
 import { AppController } from './app.controller';
-import { TerminalController } from './terminal/terminal.controller';
-import { UserController } from './user/user.controller';
-import { AccountController } from './user/account.controller';
-import { ApiController } from './api/api.controller';
-import { WsGateway } from './socket/gateway';
 /**
  * service
  */
 import { AppService } from './app.service';
-import { ApiService } from './api/api.service';
-import { TerminalService } from './terminal/terminal.service';
-import { UserService } from './user/user.service';
-import { UserAuthService } from './auth/userauth.service';
 /**
- * model
+ * module
  */
-import { User } from './entity/user.entity';
-import { Command } from './entity/command.entity';
-import { Log } from './entity/log.entity';
-import { Terminal } from './entity/terminal.entity';
-
-/**
- * middleware
- */
-import { AuthMiddleware } from './middleware/auth.middleware';
-
-/**
- * constant
- */
-import { TOKEN_SECRET, TOKEN_REFRESH_EXPIRE } from './constant';
+import { UserModule } from './user/user.module';
+import { TerminalModule } from './terminal/terminal.module';
+import { CommandModule } from './command/command.module';
+import { AuthModule } from './auth/auth.module';
+import { SocketGateway } from './socket/socket.gateway';
 
 @Module({
   imports: [
@@ -47,38 +26,17 @@ import { TOKEN_SECRET, TOKEN_REFRESH_EXPIRE } from './constant';
       host: 'localhost',
       port: 3306,
       username: 'iot',
-      password: '123456789',
+      password: '123456',
       database: 'iot',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
-    TypeOrmModule.forFeature([User, Command, Log, Terminal]),
-    JwtModule.register({
-      secret: TOKEN_SECRET,
-      signOptions: { expiresIn: TOKEN_REFRESH_EXPIRE },
-    }),
+    UserModule,
+    TerminalModule,
+    CommandModule,
+    AuthModule,
   ],
-  controllers: [
-    AppController,
-    TerminalController,
-    UserController,
-    ApiController,
-    AccountController,
-  ],
-  providers: [
-    AppService,
-    ApiService,
-    UserService,
-    TerminalService,
-    WsGateway,
-    UserAuthService,
-  ],
+  controllers: [AppController],
+  providers: [AppService, SocketGateway],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .exclude('/account/login', '/account/register')
-      .forRoutes('*');
-  }
-}
+export class AppModule {}

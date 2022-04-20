@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TOKEN_SECRET, TOKEN_REFRESH_EXPIRE } from '../constant';
 
 @Injectable()
-export class UserAuthService {
+export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
   async generateToken(id: number) {

@@ -1,13 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { UserService } from './user.service';
-import { encodePassword } from '../utils';
-import { UserAuthService } from '../auth/userauth.service';
+import { Body, Controller, HttpException, Post } from '@nestjs/common';
+import { UserService } from '../user.service';
+import { encodePassword } from '../../utils';
+import { AuthService } from '../../auth/auth.service';
 
 @Controller('account')
 export class AccountController {
   constructor(
     private userService: UserService,
-    private userAuthService: UserAuthService,
+    private authService: AuthService,
   ) {}
 
   @Post('login')
@@ -15,16 +15,18 @@ export class AccountController {
     @Body('account') account: string,
     @Body('password') password: string,
   ): Promise<object> {
-    if (!account || account.length < 3) return { code: 0, msg: '账号错误' };
+    if (!account || account.length < 3)
+      throw new HttpException('账号错误', 400);
     if (!password || password.length < 6)
-      return { code: 0, msg: '密码错误0x0' };
+      throw new HttpException('密码错误0x0', 400);
     const user = await this.userService.getUserByAccount(account);
-    if (!user) return { code: 0, msg: '密码错误0x1' };
+    if (!user) throw new HttpException('密码错误0x1', 400);
     const en_password = encodePassword(password);
-    if (en_password !== user.password) return { code: 0, msg: '密码错误0x2' };
-    if (!user.status) return { code: 0, msg: '账号状态异常' };
+    if (en_password !== user.password)
+      throw new HttpException('密码错误0x2', 400);
+    if (!user.status) throw new HttpException('账号状态异常', 400);
     await this.userService.setLastLoginTime(user.id);
-    const token = await this.userAuthService.generateToken(user.id);
+    const token = await this.authService.generateToken(user.id);
     return token ? { code: 1, data: { token } } : { code: 1, msg: '签名失败' };
   }
 

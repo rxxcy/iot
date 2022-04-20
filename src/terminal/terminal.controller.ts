@@ -1,11 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 
 @Controller('terminal')
-export class TerminalController {
-  @Get('list')
-  async list(@Req() request): Promise<any> {
-    console.log(request.user);
-
-    return {};
-  }
-}
+export class TerminalController {}

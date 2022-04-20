@@ -23,7 +23,7 @@ export class WsAdapter implements WebSocketAdapter {
   // eslint-disable-next-line @typescript-eslint/ban-types
   bindClientDisconnect(client, callback: Function) {
     callback(() => {
-      console.log('断开');
+      console.log('client - 1');
     });
     // console.log(client);
   }

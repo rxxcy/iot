@@ -5,6 +5,7 @@ import { uuid } from './utils/uuid';
 export class AppService {
   getHello(): string {
     const id = uuid(4);
-    return `hello iot! ${id}`;
+    console.log(id);
+    return 'hello iot!';
   }
 }
