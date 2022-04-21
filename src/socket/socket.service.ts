@@ -13,11 +13,11 @@ export class AppService {
     return this.terminals.keys();
   }
 
-  async add() {
+  async add(id: string, client: object | null) {
     /**
      *
      */
-    return this.terminals;
+    return this.terminals.set(id, client);
   }
 
   async remove() {
