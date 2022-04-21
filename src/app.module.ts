@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { APP_FILTER } from '@nestjs/core';
 /**
  * controller
  */
@@ -17,6 +17,11 @@ import { TerminalModule } from './terminal/terminal.module';
 import { CommandModule } from './command/command.module';
 import { AuthModule } from './auth/auth.module';
 import { SocketGateway } from './socket/socket.gateway';
+
+/**
+ * filter
+ */
+import { HttpExceptionFilter } from './common/http.exception.filter';
 
 @Module({
   imports: [
@@ -37,6 +42,13 @@ import { SocketGateway } from './socket/socket.gateway';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SocketGateway],
+  providers: [
+    AppService,
+    SocketGateway,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

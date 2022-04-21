@@ -1,16 +1,16 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
-@Index('name', ['name', 'clientId'], {})
+@Index('name', ['name', 'client_id'], {})
 @Entity('terminal', { schema: 'iot' })
 export class Terminal {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
   @Column('varchar', { name: 'client_id', nullable: true, length: 36 })
-  clientId: string | null;
+  client_id: string | null;
 
-  @Column('varchar', { name: 'key', nullable: true, length: 16 })
-  key: string | null;
+  @Column('varchar', { name: 'client_key', nullable: true, length: 16 })
+  client_key: string | null;
 
   @Column('int', { name: 'uid', nullable: true })
   uid: number | null;
@@ -22,10 +22,10 @@ export class Terminal {
   description: string | null;
 
   @Column('int', { name: 'create_time', nullable: true })
-  createTime: number | null;
+  create_time: number | null;
 
   @Column('int', { name: 'last_login_time', nullable: true })
-  lastLoginTime: number | null;
+  last_login_time: number | null;
 
   @Column('tinyint', {
     name: 'status',
@@ -33,5 +33,5 @@ export class Terminal {
     width: 1,
     default: () => '1',
   })
-  status: boolean | null;
+  status: boolean | null | number;
 }

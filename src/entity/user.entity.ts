@@ -12,10 +12,10 @@ export class User {
   email: string;
 
   @Column('int', { name: 'create_time', nullable: true })
-  createTime: number | null;
+  create_time: number | null;
 
   @Column('int', { name: 'last_login_time', nullable: true })
-  lastLoginTime: number | null;
+  last_login_time: number | null;
 
   @Column('varchar', { name: 'password', length: 41 })
   password: string;

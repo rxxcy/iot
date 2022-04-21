@@ -15,7 +15,7 @@ export class UserService {
     const user = new User();
     user.account = account;
     user.password = password;
-    user.createTime = time();
+    user.create_time = time();
     const res = await this.userModel.insert(user);
     if (res) {
       const { raw } = res;
@@ -24,12 +24,16 @@ export class UserService {
     return false;
   }
 
+  async getUserById(id: number) {
+    return await this.userModel.findOne({ where: { id } });
+  }
+
   async getUserByAccount(account: string) {
     return await this.userModel.findOne({ where: { account } });
   }
 
   async setLastLoginTime(id: number) {
-    return await this.updateUserField(id, 'lastLoginTime', time());
+    return await this.updateUserField(id, 'last_login_time', time());
   }
 
   async setPassword(id: number, password: string) {

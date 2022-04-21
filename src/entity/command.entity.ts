@@ -18,7 +18,7 @@ export class Command {
   context: string | null;
 
   @Column('int', { name: 'create_time', nullable: true })
-  createTime: number | null;
+  createt_time: number | null;
 
   @Column('tinyint', {
     name: 'status',

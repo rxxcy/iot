@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { uuid } from './utils/uuid';
+import { uuid } from './utils';
 
 @Injectable()
 export class AppService {

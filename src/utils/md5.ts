@@ -1,4 +1,4 @@
-export default class MD5 {
+export class MD5 {
   // public constructor() {}
   private hexcase = 0; /* hex output format. 0 - lowercase; 1 - uppercase        */
   private b64pad =
