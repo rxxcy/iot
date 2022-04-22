@@ -8,6 +8,10 @@ export class AppService {
     this.terminals = new Map();
   }
 
+  /**
+   * 获取全部
+   * @returns
+   */
   async all() {
     // entries
     return this.terminals.keys();
