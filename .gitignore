@@ -36,3 +36,5 @@ lerna-debug.log*
 
 # 
 /src/constant.ts
+
+pnpm-lock.yaml

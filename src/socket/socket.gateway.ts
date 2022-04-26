@@ -26,18 +26,20 @@ export class SocketGateway {
       this.no_register_clients.set(id, client);
     }
     console.log('client + 1: ' + id);
-    setTimeout(() => this.checkClientRegisterStatus(id), 1000);
+    // setTimeout(() => this.checkClientRegisterStatus(id), 10000);
   }
   handleDisconnect(client: Socket) {
     this.websocketService.del(client.id);
     this.websocketService.delClient(client.id);
-    // console.log('client - 1: ' + client.id);
+    console.log('client - 1: ' + client.id);
     // const clients = this.websocketService.all();
     // console.log(clients);
   }
 
   @SubscribeMessage('register')
   async register(@ConnectedSocket() client: any, @MessageBody() data: any): Promise<any> {
+    console.log(data);
+
     const { id } = client;
     let client_id: string, client_key: string;
     try {

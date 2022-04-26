@@ -11,7 +11,8 @@ export class TerminalController {
   async list(@Request() request) {
     const { uid } = request.user;
     const list = await this.terminalService.getAllTerminal(uid);
-    // const client = await this.websocketService.all();
+    const clients = await this.websocketService.all();
+    console.log(clients);
     return { code: 200, data: list };
   }
 
