@@ -1,8 +1,7 @@
 export class MD5 {
   // public constructor() {}
   private hexcase = 0; /* hex output format. 0 - lowercase; 1 - uppercase        */
-  private b64pad =
-    ''; /* base-64 pad character. "=" for strict RFC compliance   */
+  private b64pad = ''; /* base-64 pad character. "=" for strict RFC compliance   */
 
   /*
    * These are the privates you'll usually want to call
@@ -18,20 +17,13 @@ export class MD5 {
     return this.rstr2any(this.rstr_md5(this.str2rstr_utf8(s)), e);
   }
   public hex_hmac_md5(k: string, d: string) {
-    return this.rstr2hex(
-      this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)),
-    );
+    return this.rstr2hex(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)));
   }
   private b64_hmac_md5(k: string, d: string) {
-    return this.rstr2b64(
-      this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)),
-    );
+    return this.rstr2b64(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)));
   }
   private any_hmac_md5(k: string, d: string, e: string) {
-    return this.rstr2any(
-      this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)),
-      e,
-    );
+    return this.rstr2any(this.rstr_hmac_md5(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e);
   }
 
   /*
@@ -55,10 +47,7 @@ export class MD5 {
       opad[i] = bkey[i] ^ 0x5c5c5c5c;
     }
 
-    const hash = this.binl_md5(
-      ipad.concat(this.rstr2binl(data)),
-      512 + data.length * 8,
-    );
+    const hash = this.binl_md5(ipad.concat(this.rstr2binl(data)), 512 + data.length * 8);
     return this.binl2rstr(this.binl_md5(opad.concat(hash), 512 + 128));
   }
 
@@ -90,15 +79,11 @@ export class MD5 {
     } catch (e) {
       this.b64pad = '';
     }
-    const tab =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    const tab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     let output = '';
     const len = input.length;
     for (let i = 0; i < len; i += 3) {
-      const triplet =
-        (input.charCodeAt(i) << 16) |
-        (i + 1 < len ? input.charCodeAt(i + 1) << 8 : 0) |
-        (i + 2 < len ? input.charCodeAt(i + 2) : 0);
+      const triplet = (input.charCodeAt(i) << 16) | (i + 1 < len ? input.charCodeAt(i + 1) << 8 : 0) | (i + 2 < len ? input.charCodeAt(i + 2) : 0);
       for (let j = 0; j < 4; j++) {
         if (i * 8 + j * 6 > input.length * 8) output += this.b64pad;
         else output += tab.charAt((triplet >>> (6 * (3 - j))) & 0x3f);
@@ -117,8 +102,7 @@ export class MD5 {
     /* Convert to an array of 16-bit big-endian values, forming the dividend */
     let dividend = Array(Math.ceil(input.length / 2));
     for (i = 0; i < dividend.length; i++) {
-      dividend[i] =
-        (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
+      dividend[i] = (input.charCodeAt(i * 2) << 8) | input.charCodeAt(i * 2 + 1);
     }
 
     /*
@@ -127,9 +111,7 @@ export class MD5 {
      * forms the dividend for the next step. All remainders are stored for later
      * use.
      */
-    const full_length = Math.ceil(
-      (input.length * 8) / (Math.log(encoding.length) / Math.log(2)),
-    );
+    const full_length = Math.ceil((input.length * 8) / (Math.log(encoding.length) / Math.log(2)));
     const remainders = Array(full_length);
     for (j = 0; j < full_length; j++) {
       quotient = [];
@@ -146,8 +128,7 @@ export class MD5 {
 
     /* Convert the remainders to the output string */
     let output = '';
-    for (i = remainders.length - 1; i >= 0; i--)
-      output += encoding.charAt(remainders[i]);
+    for (i = remainders.length - 1; i >= 0; i--) output += encoding.charAt(remainders[i]);
 
     return output;
   }
@@ -172,24 +153,10 @@ export class MD5 {
 
       /* Encode output as utf-8 */
       if (x <= 0x7f) output += String.fromCharCode(x);
-      else if (x <= 0x7ff)
-        output += String.fromCharCode(
-          0xc0 | ((x >>> 6) & 0x1f),
-          0x80 | (x & 0x3f),
-        );
-      else if (x <= 0xffff)
-        output += String.fromCharCode(
-          0xe0 | ((x >>> 12) & 0x0f),
-          0x80 | ((x >>> 6) & 0x3f),
-          0x80 | (x & 0x3f),
-        );
+      else if (x <= 0x7ff) output += String.fromCharCode(0xc0 | ((x >>> 6) & 0x1f), 0x80 | (x & 0x3f));
+      else if (x <= 0xffff) output += String.fromCharCode(0xe0 | ((x >>> 12) & 0x0f), 0x80 | ((x >>> 6) & 0x3f), 0x80 | (x & 0x3f));
       else if (x <= 0x1fffff)
-        output += String.fromCharCode(
-          0xf0 | ((x >>> 18) & 0x07),
-          0x80 | ((x >>> 12) & 0x3f),
-          0x80 | ((x >>> 6) & 0x3f),
-          0x80 | (x & 0x3f),
-        );
+        output += String.fromCharCode(0xf0 | ((x >>> 18) & 0x07), 0x80 | ((x >>> 12) & 0x3f), 0x80 | ((x >>> 6) & 0x3f), 0x80 | (x & 0x3f));
     }
     return output;
   }
@@ -199,21 +166,13 @@ export class MD5 {
    */
   public str2rstr_utf16le(input: string) {
     let output = '';
-    for (let i = 0; i < input.length; i++)
-      output += String.fromCharCode(
-        input.charCodeAt(i) & 0xff,
-        (input.charCodeAt(i) >>> 8) & 0xff,
-      );
+    for (let i = 0; i < input.length; i++) output += String.fromCharCode(input.charCodeAt(i) & 0xff, (input.charCodeAt(i) >>> 8) & 0xff);
     return output;
   }
 
   public str2rstr_utf16be(input: string) {
     let output = '';
-    for (let i = 0; i < input.length; i++)
-      output += String.fromCharCode(
-        (input.charCodeAt(i) >>> 8) & 0xff,
-        input.charCodeAt(i) & 0xff,
-      );
+    for (let i = 0; i < input.length; i++) output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xff, input.charCodeAt(i) & 0xff);
     return output;
   }
 
@@ -224,8 +183,7 @@ export class MD5 {
   public rstr2binl(input: string) {
     const output = Array(input.length >> 2);
     for (let i = 0; i < output.length; i++) output[i] = 0;
-    for (let i = 0; i < input.length * 8; i += 8)
-      output[i >> 5] |= (input.charCodeAt(i / 8) & 0xff) << i % 32;
+    for (let i = 0; i < input.length * 8; i += 8) output[i >> 5] |= (input.charCodeAt(i / 8) & 0xff) << i % 32;
     return output;
   }
 
@@ -234,8 +192,7 @@ export class MD5 {
    */
   public binl2rstr(input: number[]) {
     let output = '';
-    for (let i = 0; i < input.length * 32; i += 8)
-      output += String.fromCharCode((input[i >> 5] >>> i % 32) & 0xff);
+    for (let i = 0; i < input.length * 32; i += 8) output += String.fromCharCode((input[i >> 5] >>> i % 32) & 0xff);
     return output;
   }
 
@@ -338,10 +295,7 @@ export class MD5 {
    * These privates implement the four basic operations the algorithm uses.
    */
   public md5_cmn(q: any, a: any, b: any, x: any, s: any, t: any) {
-    return this.safe_add(
-      this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s),
-      b,
-    );
+    return this.safe_add(this.bit_rol(this.safe_add(this.safe_add(a, q), this.safe_add(x, t)), s), b);
   }
   public md5_ff(a: any, b: any, c: any, d: any, x: any, s: any, t: any) {
     return this.md5_cmn((b & c) | (~b & d), a, b, x, s, t);

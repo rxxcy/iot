@@ -1,33 +1,22 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-// import { Request as ExpressRequest } from 'express';
+import { WebscoketService } from '../socket/socket.service';
 import { TerminalService } from './terminal.service';
 
 @Controller('terminal')
 @UseGuards(AuthGuard('jwt'))
 export class TerminalController {
-  constructor(private readonly terminalService: TerminalService) {}
+  constructor(private readonly terminalService: TerminalService, private readonly websocketService: WebscoketService) {}
   @Get('list')
   async list(@Request() request) {
     const { uid } = request.user;
     const list = await this.terminalService.getAllTerminal(uid);
+    // const client = await this.websocketService.all();
     return { code: 200, data: list };
   }
 
   @Post('create')
-  async create(
-    @Request() request,
-    @Body('name') name: string,
-    @Body('description') description: string,
-  ) {
+  async create(@Request() request, @Body('name') name: string, @Body('description') description: string) {
     const { uid } = request.user;
     const res = await this.terminalService.create(uid, name, description);
     if (!res) throw new HttpException('创建失败', 400);

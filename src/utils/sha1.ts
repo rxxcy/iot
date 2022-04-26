@@ -21,11 +21,7 @@ export class Sha1 {
     this.msg = this.Utf8Encode(msg);
     this.msg_len = this.msg.length;
     for (let i = 0; i < this.msg_len - 3; i += 4) {
-      const j =
-        (this.msg.charCodeAt(i) << 24) |
-        (this.msg.charCodeAt(i + 1) << 16) |
-        (this.msg.charCodeAt(i + 2) << 8) |
-        this.msg.charCodeAt(i + 3);
+      const j = (this.msg.charCodeAt(i) << 24) | (this.msg.charCodeAt(i + 1) << 16) | (this.msg.charCodeAt(i + 2) << 8) | this.msg.charCodeAt(i + 3);
       this.word_array.push(j);
     }
     this.initMsg(this.msg_len);
@@ -42,18 +38,11 @@ export class Sha1 {
         break;
 
       case 2:
-        i =
-          (this.msg.charCodeAt(msg_len - 2) << 24) |
-          (this.msg.charCodeAt(msg_len - 1) << 16) |
-          0x08000;
+        i = (this.msg.charCodeAt(msg_len - 2) << 24) | (this.msg.charCodeAt(msg_len - 1) << 16) | 0x08000;
         break;
 
       case 3:
-        i =
-          (this.msg.charCodeAt(msg_len - 3) << 24) |
-          (this.msg.charCodeAt(msg_len - 2) << 16) |
-          (this.msg.charCodeAt(msg_len - 1) << 8) |
-          0x80;
+        i = (this.msg.charCodeAt(msg_len - 3) << 24) | (this.msg.charCodeAt(msg_len - 2) << 16) | (this.msg.charCodeAt(msg_len - 1) << 8) | 0x80;
         break;
     }
     this.word_array.push(i);
@@ -64,18 +53,9 @@ export class Sha1 {
   }
 
   public getTemp() {
-    for (
-      this.blockstart = 0;
-      this.blockstart < this.word_array.length;
-      this.blockstart += 16
-    ) {
-      for (let i = 0; i < 16; i++)
-        this.W[i] = this.word_array[this.blockstart + i];
-      for (let i = 16; i <= 79; i++)
-        this.W[i] = this.rotate_left(
-          this.W[i - 3] ^ this.W[i - 8] ^ this.W[i - 14] ^ this.W[i - 16],
-          1,
-        );
+    for (this.blockstart = 0; this.blockstart < this.word_array.length; this.blockstart += 16) {
+      for (let i = 0; i < 16; i++) this.W[i] = this.word_array[this.blockstart + i];
+      for (let i = 16; i <= 79; i++) this.W[i] = this.rotate_left(this.W[i - 3] ^ this.W[i - 8] ^ this.W[i - 14] ^ this.W[i - 16], 1);
 
       this.A = this.H0;
       this.B = this.H1;
@@ -84,13 +64,7 @@ export class Sha1 {
       this.E = this.H4;
 
       for (let i = 0; i <= 19; i++) {
-        this.temp =
-          (this.rotate_left(this.A, 5) +
-            ((this.B & this.C) | (~this.B & this.D)) +
-            this.E +
-            this.W[i] +
-            0x5a827999) &
-          0x0ffffffff;
+        this.temp = (this.rotate_left(this.A, 5) + ((this.B & this.C) | (~this.B & this.D)) + this.E + this.W[i] + 0x5a827999) & 0x0ffffffff;
         this.E = this.D;
         this.D = this.C;
         this.C = this.rotate_left(this.B, 30);
@@ -99,13 +73,7 @@ export class Sha1 {
       }
 
       for (let i = 20; i <= 39; i++) {
-        this.temp =
-          (this.rotate_left(this.A, 5) +
-            (this.B ^ this.C ^ this.D) +
-            this.E +
-            this.W[i] +
-            0x6ed9eba1) &
-          0x0ffffffff;
+        this.temp = (this.rotate_left(this.A, 5) + (this.B ^ this.C ^ this.D) + this.E + this.W[i] + 0x6ed9eba1) & 0x0ffffffff;
         this.E = this.D;
         this.D = this.C;
         this.C = this.rotate_left(this.B, 30);
@@ -114,13 +82,7 @@ export class Sha1 {
       }
 
       for (let i = 40; i <= 59; i++) {
-        this.temp =
-          (this.rotate_left(this.A, 5) +
-            ((this.B & this.C) | (this.B & this.D) | (this.C & this.D)) +
-            this.E +
-            this.W[i] +
-            0x8f1bbcdc) &
-          0x0ffffffff;
+        this.temp = (this.rotate_left(this.A, 5) + ((this.B & this.C) | (this.B & this.D) | (this.C & this.D)) + this.E + this.W[i] + 0x8f1bbcdc) & 0x0ffffffff;
         this.E = this.D;
         this.D = this.C;
         this.C = this.rotate_left(this.B, 30);
@@ -129,13 +91,7 @@ export class Sha1 {
       }
 
       for (let i = 60; i <= 79; i++) {
-        this.temp =
-          (this.rotate_left(this.A, 5) +
-            (this.B ^ this.C ^ this.D) +
-            this.E +
-            this.W[i] +
-            0xca62c1d6) &
-          0x0ffffffff;
+        this.temp = (this.rotate_left(this.A, 5) + (this.B ^ this.C ^ this.D) + this.E + this.W[i] + 0xca62c1d6) & 0x0ffffffff;
         this.E = this.D;
         this.D = this.C;
         this.C = this.rotate_left(this.B, 30);
@@ -153,12 +109,7 @@ export class Sha1 {
 
   /**获取sha1加密字符串*/
   public hex_sha1() {
-    const temp =
-      this.cvt_hex(this.H0) +
-      this.cvt_hex(this.H1) +
-      this.cvt_hex(this.H2) +
-      this.cvt_hex(this.H3) +
-      this.cvt_hex(this.H4);
+    const temp = this.cvt_hex(this.H0) + this.cvt_hex(this.H1) + this.cvt_hex(this.H2) + this.cvt_hex(this.H3) + this.cvt_hex(this.H4);
     return temp.toLowerCase();
   }
 

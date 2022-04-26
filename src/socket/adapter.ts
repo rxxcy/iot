@@ -28,28 +28,17 @@ export class WsAdapter implements WebSocketAdapter {
     // console.log(client);
   }
 
-  bindMessageHandlers(
-    client: WebSocket,
-    handlers: MessageMappingProperties[],
-    process: (data: any) => Observable<any>,
-  ) {
+  bindMessageHandlers(client: WebSocket, handlers: MessageMappingProperties[], process: (data: any) => Observable<any>) {
     console.log('[ WSAdapter ] client + 1');
     fromEvent(client, 'message')
       .pipe(
-        mergeMap((data) =>
-          this.bindMessageHandler(client, data, handlers, process),
-        ),
+        mergeMap((data) => this.bindMessageHandler(client, data, handlers, process)),
         filter((result) => result),
       )
       .subscribe((response) => client.send(JSON.stringify(response)));
   }
 
-  bindMessageHandler(
-    client: WebSocket,
-    buffer,
-    handlers: MessageMappingProperties[],
-    process: (data: any) => Observable<any>,
-  ): Observable<any> {
+  bindMessageHandler(client: WebSocket, buffer, handlers: MessageMappingProperties[], process: (data: any) => Observable<any>): Observable<any> {
     let message = null;
     try {
       message = JSON.parse(buffer.data);
@@ -58,9 +47,7 @@ export class WsAdapter implements WebSocketAdapter {
       return EMPTY;
     }
 
-    const messageHandler = handlers.find(
-      (handler) => handler.message === message.event,
-    );
+    const messageHandler = handlers.find((handler) => handler.message === message.event);
     if (!messageHandler) {
       return EMPTY;
     }
