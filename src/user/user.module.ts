@@ -7,11 +7,11 @@ import { TOKEN_SECRET, TOKEN_REFRESH_EXPIRE } from '../constant';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { AuthService } from '../auth/auth.service';
-import { WebscoketService } from '../socket/socket.service';
+import { ScoketService } from '../socket/socket.service';
 
 @Module({
   controllers: [AccountController, UserController],
-  providers: [UserService, AuthService, WebscoketService],
+  providers: [UserService, AuthService, ScoketService],
   imports: [
     JwtModule.register({
       secret: TOKEN_SECRET,

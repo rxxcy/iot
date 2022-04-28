@@ -1,19 +1,19 @@
-import { Body, Controller, Get, HttpException, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { WebscoketService } from '../socket/socket.service';
+import { ScoketService } from '../socket/socket.service';
 import { TerminalService } from './terminal.service';
 
 @Controller('terminal')
 @UseGuards(AuthGuard('jwt'))
 export class TerminalController {
-  constructor(private readonly terminalService: TerminalService, private readonly websocketService: WebscoketService) {}
+  constructor(private readonly terminalService: TerminalService, private readonly socketService: ScoketService) {}
   @Get('list')
-  async list(@Request() request) {
+  async list(@Request() request, @Query('page') page = 1, @Query('limit') limit = 10) {
     const { uid } = request.user;
-    const list = await this.terminalService.getAllTerminal(uid);
-    const clients = await this.websocketService.all();
+    const list = await this.terminalService.getTerminalList(uid, page, limit);
+    const clients = await this.socketService.all();
     console.log(clients);
-    return { code: 200, data: list };
+    return { status: 200, data: list };
   }
 
   @Post('create')
@@ -21,7 +21,7 @@ export class TerminalController {
     const { uid } = request.user;
     const res = await this.terminalService.create(uid, name, description);
     if (!res) throw new HttpException('创建失败', 400);
-    return { code: 200, data: res };
+    return { status: 200, data: res };
   }
 
   /**
@@ -34,7 +34,7 @@ export class TerminalController {
     const refresh = await this.terminalService.refreshKeyAndId(uid, id);
     if (!refresh) throw new HttpException('重置失败', 400);
     return {
-      code: 200,
+      status: 200,
       data: { client_id: refresh.client_id, client_key: refresh.client_key },
     };
   }
@@ -48,7 +48,7 @@ export class TerminalController {
     const del = await this.terminalService.delete(uid, id);
     if (!del) throw new HttpException('删除失败', 400);
     return {
-      code: 200,
+      status: 200,
       data: { id },
     };
   }

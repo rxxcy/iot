@@ -1,13 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class WebscoketService {
+export class ScoketService {
   public clients: Map<string, string>;
   public terminals: Map<string, object>;
 
   constructor() {
     this.clients = new Map();
     this.terminals = new Map();
+  }
+
+  get(id: string) {
+    if (id.length > 9) {
+      // client.id
+      const client_id = this.clients.get(id);
+      if (!client_id) return false;
+      return this.terminals.get(client_id);
+    } else {
+      // client_id
+      const client: any = this.terminals.get(id);
+      return client;
+    }
   }
 
   /**
@@ -37,7 +50,8 @@ export class WebscoketService {
       const client_id = this.clients.get(id);
       if (!client_id) return false;
       this.clients.delete(id);
-      return this.terminals.delete(client_id);
+      const client: any = this.clients.get(client_id);
+      return client.disconnect();
     } else {
       // client_id
       const client: any = this.terminals.get(id);

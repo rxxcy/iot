@@ -14,7 +14,7 @@ export class AccountController {
     const user = await this.userService.getUserByAccount(account);
     if (!user) throw new HttpException('密码错误 0x1', 400);
     const en_password = encodePassword(password);
-    if (en_password !== user.password) throw new HttpException('密码错误0x2', 400);
+    if (en_password !== user.password) throw new HttpException('密码错误 0x2', 400);
     if (!user.status) throw new HttpException('账号状态异常', 400);
     await this.userService.setLastLoginTime(user.id);
     const token = await this.authService.generateToken(user.id);

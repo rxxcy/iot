@@ -2,7 +2,7 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { Server, Socket } from 'socket.io';
 import { TerminalService } from '../terminal/terminal.service';
 import { SOCKET_POTR } from '../constant';
-import { WebscoketService } from './socket.service';
+import { ScoketService } from './socket.service';
 
 @WebSocketGateway(SOCKET_POTR, {
   path: '/socket.io',
@@ -16,7 +16,7 @@ export class SocketGateway {
   // socket实例
   @WebSocketServer() private server: Server;
   public no_register_clients: Map<string, object>;
-  constructor(private readonly websocketService: WebscoketService, private readonly terminalService: TerminalService) {
+  constructor(private readonly socketService: ScoketService, private readonly terminalService: TerminalService) {
     this.no_register_clients = new Map();
   }
 
@@ -29,8 +29,8 @@ export class SocketGateway {
     // setTimeout(() => this.checkClientRegisterStatus(id), 10000);
   }
   handleDisconnect(client: Socket) {
-    this.websocketService.del(client.id);
-    this.websocketService.delClient(client.id);
+    this.socketService.del(client.id);
+    this.socketService.delClient(client.id);
     console.log('client - 1: ' + client.id);
     // const clients = this.websocketService.all();
     // console.log(clients);
@@ -67,7 +67,7 @@ export class SocketGateway {
         data: 'id和key不匹配',
         code: 0,
       };
-    this.websocketService.add(id, client_id, client);
+    this.socketService.add(id, client_id, client);
     this.no_register_clients.delete(id);
     // const clients = this.websocketService.all();
     // console.log(clients);

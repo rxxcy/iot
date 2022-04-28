@@ -4,29 +4,32 @@ import { uuid, createTerminalKey } from '../utils/index';
 import { Repository } from 'typeorm';
 import { Terminal } from '../entity/terminal.entity';
 import { time } from '../utils';
+import { ScoketService } from 'src/socket/socket.service';
 
 @Injectable()
 export class TerminalService {
   constructor(
     @InjectRepository(Terminal)
     private readonly terminalModel: Repository<Terminal>,
+    private readonly scoketService: ScoketService,
   ) {}
 
-  async getAllTerminal(uid: number) {
-    return await this.terminalModel.find({
+  async getTerminalList(uid: number, page: number, limit: number) {
+    const count = await this.terminalModel.count({ where: { uid, status: 1 } });
+    const list = await this.terminalModel.find({
       where: { uid, status: 1 },
       order: { id: 'desc' },
-      select: [
-        'id',
-        'client_id',
-        'client_key',
-        'name',
-        'description',
-        'create_time',
-        'last_login_time',
-        'status',
-      ],
+      select: ['id', 'client_id', 'client_key', 'name', 'description', 'create_time', 'last_login_time', 'status'],
+      skip: (page - 1) * limit, // 分页，跳过
+      take: 10, // 分页，limit
     });
+    if (list) {
+      list.forEach((item) => {
+        const { client_id } = item;
+        // const online = this.scoketService.
+      });
+    }
+    return { count, list };
   }
 
   async create(uid: number, name: string, description: string) {

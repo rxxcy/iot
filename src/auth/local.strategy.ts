@@ -12,7 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(token: string): Promise<any> {
     const user = await this.authService.verifyAccessToken(token);
     if (!user) {
-      throw new HttpException('请先登录', 400);
+      throw new HttpException('请先登录', 403);
     }
     return user;
   }
