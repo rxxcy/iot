@@ -2,7 +2,6 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { Server, Socket } from 'socket.io';
 import { TerminalService } from '../terminal/terminal.service';
 import { SOCKET_POTR } from '../constant';
-import { ScoketService } from './socket.service';
 
 @WebSocketGateway(SOCKET_POTR, {
   path: '/socket.io',
@@ -14,10 +13,14 @@ import { ScoketService } from './socket.service';
 })
 export class SocketGateway {
   // socket实例
-  @WebSocketServer() private server: Server;
+  @WebSocketServer() server: Server;
   public no_register_clients: Map<string, object>;
-  constructor(private readonly socketService: ScoketService, private readonly terminalService: TerminalService) {
+  public clients: Map<string, string>;
+  public terminals: Map<string, any>;
+  constructor(private readonly terminalService: TerminalService) {
     this.no_register_clients = new Map();
+    this.clients = new Map();
+    this.terminals = new Map();
   }
 
   handleConnection(client: Socket) {
@@ -25,21 +28,16 @@ export class SocketGateway {
     if (!this.no_register_clients.has(id)) {
       this.no_register_clients.set(id, client);
     }
-    console.log('client + 1: ' + id);
-    // setTimeout(() => this.checkClientRegisterStatus(id), 10000);
+    console.log('client + 1: ', id);
+    setTimeout(() => this.checkTerminalRegisterStatus(id), 5000);
   }
   handleDisconnect(client: Socket) {
-    this.socketService.del(client.id);
-    this.socketService.delClient(client.id);
-    console.log('client - 1: ' + client.id);
-    // const clients = this.websocketService.all();
-    // console.log(clients);
+    console.log('client - 1: ', client.id);
+    this.removeTerminal(client.id);
   }
 
   @SubscribeMessage('register')
   async register(@ConnectedSocket() client: any, @MessageBody() data: any): Promise<any> {
-    console.log(data);
-
     const { id } = client;
     let client_id: string, client_key: string;
     try {
@@ -67,26 +65,64 @@ export class SocketGateway {
         data: 'id和key不匹配',
         code: 0,
       };
-    this.socketService.add(id, client_id, client);
+    this.registerTeminal(id, client_id, client);
+    this.terminalService.setLastLoginTime(client_id);
     this.no_register_clients.delete(id);
-    // const clients = this.websocketService.all();
-    // console.log(clients);
     return {
       event: 'register',
-      data: client_id,
-      code: 200,
+      data: '注册成功',
     };
   }
 
-  private checkClientRegisterStatus(id: string) {
-    console.log('check: ', id);
+  @SubscribeMessage('all')
+  async all(@ConnectedSocket() client: any, @MessageBody() data: any): Promise<any> {
+    const list = this.terminals.keys();
+    return {
+      event: 'all',
+      data: list,
+    };
+  }
+
+  private checkTerminalRegisterStatus(id: string) {
     const client: any = this.no_register_clients.get(id);
     if (client) {
       console.log('disconnect: ', id);
       client.disconnect();
       this.no_register_clients.delete(id);
     } else {
-      console.log('注册了');
+      console.log('注册了: ', id);
     }
+  }
+
+  public registerTeminal(id: string, client_id: string, client: any) {
+    this.clients.set(id, client_id);
+    this.terminals.set(client_id, client);
+  }
+
+  /**
+   * 删除终端
+   * @param id
+   * @returns
+   */
+  public removeTerminal(id: string) {
+    const client_id = this.clients.get(id);
+    this.clients.delete(id);
+    return this.terminals.delete(client_id);
+  }
+
+  /**
+   * 根据 id 获取终端 自动判断id类型
+   * @param id
+   * @returns
+   */
+  public getTerminalById(id: string) {
+    let client_id = id;
+    if (client_id.length > 9) {
+      /**
+       * client.id
+       */
+      client_id = this.clients.get(client_id);
+    }
+    return this.terminals.get(id);
   }
 }

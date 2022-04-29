@@ -35,9 +35,11 @@ export class ScoketService {
     };
   }
 
-  add(id: string, client_id: string, client: object | null) {
+  add(id: string, client_id: string, client: any) {
     this.clients.set(id, client_id);
-    return this.terminals.set(client_id, client);
+    this.terminals.set(client_id, client);
+    console.log(this.clients);
+    return true;
   }
 
   delClient(id: string) {
@@ -51,7 +53,9 @@ export class ScoketService {
       if (!client_id) return false;
       this.clients.delete(id);
       const client: any = this.clients.get(client_id);
-      return client.disconnect();
+      console.log(client);
+      return false;
+      // return client.disconnect();
     } else {
       // client_id
       const client: any = this.terminals.get(id);

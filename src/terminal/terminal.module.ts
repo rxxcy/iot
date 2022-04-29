@@ -3,11 +3,12 @@ import { TerminalController } from './terminal.controller';
 import { TerminalService } from './terminal.service';
 import { Terminal } from '../entity/terminal.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ScoketService } from '../socket/socket.service';
+import { SocketModule } from '../socket/socket.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Terminal])],
+  imports: [TypeOrmModule.forFeature([Terminal]), SocketModule],
   controllers: [TerminalController],
-  providers: [TerminalService, ScoketService],
+  providers: [TerminalService],
+  exports: [TerminalService],
 })
 export class TerminalModule {}

@@ -34,4 +34,8 @@ export class Terminal {
     default: () => '1',
   })
   status: boolean | null | number;
+  /**
+   * 自定义属性 在线状态
+   */
+  state: boolean | null | number;
 }

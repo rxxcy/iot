@@ -7,9 +7,7 @@ import { encodePassword } from '../utils';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private readonly userModel: Repository<User>,
-  ) {}
+  constructor(@InjectRepository(User) private readonly userModel: Repository<User>) {}
 
   async create({ account, password }) {
     const user = new User();

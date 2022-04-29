@@ -1,19 +1,23 @@
 import { Body, Controller, Get, HttpException, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ScoketService } from '../socket/socket.service';
 import { TerminalService } from './terminal.service';
+import { SocketGateway } from '../socket/socket.gateway';
 
 @Controller('terminal')
 @UseGuards(AuthGuard('jwt'))
 export class TerminalController {
-  constructor(private readonly terminalService: TerminalService, private readonly socketService: ScoketService) {}
+  constructor(private readonly terminalService: TerminalService, private readonly socketGateway: SocketGateway) {}
   @Get('list')
-  async list(@Request() request, @Query('page') page = 1, @Query('limit') limit = 10) {
+  async list(@Request() request, @Query('page') page = 1, @Query('limit') limit = 10, @Query('keywords') keywords: string) {
     const { uid } = request.user;
-    const list = await this.terminalService.getTerminalList(uid, page, limit);
-    const clients = await this.socketService.all();
-    console.log(clients);
-    return { status: 200, data: list };
+    const { list, count } = await this.terminalService.getTerminalList(uid, page, limit);
+    if (list) {
+      list.forEach(({ client_id }, index) => {
+        list[index].state = !!this.socketGateway.getTerminalById(client_id);
+      });
+    }
+
+    return { status: 200, data: { list, count } };
   }
 
   @Post('create')

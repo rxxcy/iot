@@ -1,13 +1,14 @@
-import { Module } from '@nestjs/common';
-import { TerminalService } from '../terminal/terminal.service';
-import { ScoketService } from './socket.service';
+import { Module /*forwardRef*/ } from '@nestjs/common';
 import { Terminal } from '../entity/terminal.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SocketGateway } from './socket.gateway';
+import { TerminalService } from 'src/terminal/terminal.service';
+// import { TerminalModule } from '../terminal/terminal.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Terminal])],
+  imports: [TypeOrmModule.forFeature([Terminal]) /* forwardRef(() => TerminalModule) */],
   controllers: [],
-  providers: [ScoketService, TerminalService, SocketGateway],
+  providers: [SocketGateway, TerminalService],
+  exports: [SocketGateway],
 })
 export class SocketModule {}

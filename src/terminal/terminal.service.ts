@@ -4,15 +4,10 @@ import { uuid, createTerminalKey } from '../utils/index';
 import { Repository } from 'typeorm';
 import { Terminal } from '../entity/terminal.entity';
 import { time } from '../utils';
-import { ScoketService } from 'src/socket/socket.service';
 
 @Injectable()
 export class TerminalService {
-  constructor(
-    @InjectRepository(Terminal)
-    private readonly terminalModel: Repository<Terminal>,
-    private readonly scoketService: ScoketService,
-  ) {}
+  constructor(@InjectRepository(Terminal) private readonly terminalModel: Repository<Terminal>) {}
 
   async getTerminalList(uid: number, page: number, limit: number) {
     const count = await this.terminalModel.count({ where: { uid, status: 1 } });
@@ -90,6 +85,12 @@ export class TerminalService {
     if (!terminal) return false;
     terminal.status = 0;
     return await this.terminalModel.save(terminal);
+  }
+
+  async setLastLoginTime(id: string) {
+    const client = await this.getTerminalByClientID(id);
+    client.last_login_time = time();
+    return this.terminalModel.save(client);
   }
 
   async getTerminalByClientID(client_id: string, uid?: number | null) {
