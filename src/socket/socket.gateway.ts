@@ -2,6 +2,7 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { Server, Socket } from 'socket.io';
 import { TerminalService } from '../terminal/terminal.service';
 import { SOCKET_POTR } from '../constant';
+import { ScoketService } from './socket.service';
 
 @WebSocketGateway(SOCKET_POTR, {
   path: '/socket.io',
@@ -17,7 +18,7 @@ export class SocketGateway {
   public no_register_clients: Map<string, object>;
   public clients: Map<string, string>;
   public terminals: Map<string, any>;
-  constructor(private readonly terminalService: TerminalService) {
+  constructor(private readonly terminalService: TerminalService, private readonly scoketService: ScoketService) {
     this.no_register_clients = new Map();
     this.clients = new Map();
     this.terminals = new Map();
@@ -65,7 +66,7 @@ export class SocketGateway {
         data: 'id和key不匹配',
         code: 0,
       };
-    this.registerTeminal(id, client_id, client);
+    this.scoketService.registerTeminal(id, client_id, client);
     this.terminalService.setLastLoginTime(client_id);
     this.no_register_clients.delete(id);
     return {
@@ -74,29 +75,15 @@ export class SocketGateway {
     };
   }
 
-  @SubscribeMessage('all')
-  async all(@ConnectedSocket() client: any, @MessageBody() data: any): Promise<any> {
-    const list = this.terminals.keys();
-    return {
-      event: 'all',
-      data: list,
-    };
-  }
-
   private checkTerminalRegisterStatus(id: string) {
     const client: any = this.no_register_clients.get(id);
     if (client) {
-      console.log('disconnect: ', id);
+      console.log('auto disconnect: ', id);
       client.disconnect();
       this.no_register_clients.delete(id);
     } else {
-      console.log('注册了: ', id);
+      console.log('registered: ', id);
     }
-  }
-
-  public registerTeminal(id: string, client_id: string, client: any) {
-    this.clients.set(id, client_id);
-    this.terminals.set(client_id, client);
   }
 
   /**

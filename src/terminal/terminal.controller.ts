@@ -1,19 +1,20 @@
 import { Body, Controller, Get, HttpException, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { TerminalService } from './terminal.service';
-import { SocketGateway } from '../socket/socket.gateway';
+// import { SocketGateway } from '../socket/socket.gateway';
+import { ScoketService } from '../socket/socket.service';
 
 @Controller('terminal')
 @UseGuards(AuthGuard('jwt'))
 export class TerminalController {
-  constructor(private readonly terminalService: TerminalService, private readonly socketGateway: SocketGateway) {}
+  constructor(private readonly terminalService: TerminalService, private readonly scoketService: ScoketService) {}
   @Get('list')
   async list(@Request() request, @Query('page') page = 1, @Query('limit') limit = 10, @Query('keywords') keywords: string) {
     const { uid } = request.user;
     const { list, count } = await this.terminalService.getTerminalList(uid, page, limit);
     if (list) {
       list.forEach(({ client_id }, index) => {
-        list[index].state = !!this.socketGateway.getTerminalById(client_id);
+        list[index].state = !!this.scoketService.isOnline(client_id);
       });
     }
 
