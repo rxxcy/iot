@@ -48,7 +48,7 @@ export class ScoketService {
     }
   }
 
-  remove(id: string) {
+  removeTerminal(id: string) {
     if (id.length > 9) {
       // client.id
       const client_id = this.clients.get(id);
