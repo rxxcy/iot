@@ -16,12 +16,8 @@ export class SocketGateway {
   // socket实例
   @WebSocketServer() server: Server;
   public no_register_clients: Map<string, object>;
-  public clients: Map<string, string>;
-  public terminals: Map<string, any>;
   constructor(private readonly terminalService: TerminalService, private readonly scoketService: ScoketService) {
     this.no_register_clients = new Map();
-    this.clients = new Map();
-    this.terminals = new Map();
   }
 
   handleConnection(client: Socket) {
@@ -34,7 +30,7 @@ export class SocketGateway {
   }
   handleDisconnect(client: Socket) {
     console.log('client - 1: ', client.id);
-    this.removeTerminal(client.id);
+    this.scoketService.removeTerminal(client.id);
   }
 
   @SubscribeMessage('register')
@@ -84,32 +80,5 @@ export class SocketGateway {
     } else {
       console.log('registered: ', id);
     }
-  }
-
-  /**
-   * 删除终端
-   * @param id
-   * @returns
-   */
-  public removeTerminal(id: string) {
-    const client_id = this.clients.get(id);
-    this.clients.delete(id);
-    return this.terminals.delete(client_id);
-  }
-
-  /**
-   * 根据 id 获取终端 自动判断id类型
-   * @param id
-   * @returns
-   */
-  public getTerminalById(id: string) {
-    let client_id = id;
-    if (client_id.length > 9) {
-      /**
-       * client.id
-       */
-      client_id = this.clients.get(client_id);
-    }
-    return this.terminals.get(id);
   }
 }

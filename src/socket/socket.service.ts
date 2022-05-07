@@ -54,15 +54,12 @@ export class ScoketService {
       const client_id = this.clients.get(id);
       if (!client_id) return false;
       this.clients.delete(id);
-      const client: any = this.clients.get(client_id);
-      console.log(client);
-      return false;
+      // const client: any = this.clients.get(client_id);
+      return this.terminals.delete(client_id);
       // return client.disconnect();
     } else {
       // client_id
-      const client: any = this.terminals.get(id);
-      if (!client) return false;
-      return client.disconnect();
+      return this.terminals.delete(id);
     }
   }
 
